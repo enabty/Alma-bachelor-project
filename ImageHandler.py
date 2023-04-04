@@ -143,7 +143,7 @@ class Observation:
         self.img_data = (self.img_data * multiplicand) + addend
         self.save_image()
 
-    def noise_jitter(self, percetage_changed=1):
+    def noise_jitter(self, percetage_changed=1.0):
         if (self.file_format != ".fits"):
             print("file must be .fits format")
             return
@@ -157,6 +157,26 @@ class Observation:
             y = indices[i][1]
             data[x][y] *= random.uniform(0.97,1.03)
         self.save_image()
+    
+    def neighbour_jitter(self, percetage_changed=1.0):
+        data = self.img_data[0][0]
+        indices = np.asarray([(i,j) for i in range(len(data)) for j in range(len(data[i]))])
+        np.random.shuffle(indices)
+        n = int(np.floor(data.shape[0]*data.shape[1]*percetage_changed))
+
+        change_buffer = []
+        for i in range(n):
+            x = indices[i][0]
+            y = indices[i][1]
+            neighbours = np.asarray([data[max(0, x-1)][y], data[min(data.shape[0]-1, x-1)][y], data[x][max(0, y-1)], data[x][min(data.shape[0]-1, y-1)]])
+            max_intensity = np.max(neighbours)
+            min_intensity = np.min(neighbours)
+            change_buffer.append((x,y, random.uniform(min_intensity,max_intensity)))
+        
+        for x, y, intensity in change_buffer:
+            data[x][y] = intensity
+        self.save_image()
+    
         
     
     # Cut out a square of a radius at a center = (x,y) and scale up the size with interpolation
@@ -196,5 +216,7 @@ def tester():
     test.file_name = 'test'
     print(test.full_path)
     test.save_image(save_format='.fits')
-    test.display_image()
+    #test.display_image()
+    test.full_path = ("I:/Github/ALMA/Code/data/train/", "b335_2017_band6_0" , ".fits")
+    print(test.full_path)
 tester()
