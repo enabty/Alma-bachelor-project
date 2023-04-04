@@ -125,10 +125,11 @@ class Observation:
         if (self.file_format != ".fits"):
             print("file must be .fits format")
             return
-        print('Min:', np.min(self.img_data))
-        print('Max:', np.max(self.img_data))
-        print('Mean:', np.mean(self.img_data))
-        print('Stdev:', np.std(self.img_data))
+        print("Stats for: " + self.file_name)
+        print('Min:', np.nanmin(self.img_data))
+        print('Max:', np.nanmax(self.img_data))
+        print('Mean:', np.nanmean(self.img_data))
+        print('Stdev:', np.nanstd(self.img_data) , '\n')
         if (display_histogram):
             histogram = plt.hist(self.img_data.flatten(), bins='auto')
             plt.show()
@@ -186,11 +187,10 @@ class Observation:
             return
         
         matrix = self.img_data[0][0]
-        mini = np.min(matrix)
-        maxi = np.max(matrix)
-
+        mini = np.nanmin(matrix)
+        maxi = np.nanmax(matrix)
         # Radius cannot be bigger than the closest edge
-        radius = min(radius, center[0], 100 - center[0], center[1], 100 - center[1])
+        radius = min(radius, center[0], self.img_data.shape[2] - center[0], center[1], self.img_data.shape[3] - center[1])
         # Cut the matrix in the center
         focus = matrix[center[1] - radius : center[1] + radius, center[0] - radius : center[0] + radius]
 
@@ -211,12 +211,12 @@ def tester():
     hdul = fits.open("I:/Github/ALMA/Code/data/train/" + "b335_2017_band6_0" + ".fits")
     data = hdul[0].data
     hdul.close()
-    print(data.shape)
     test = Observation("I:/Github/ALMA/Code/data/train/", "b335_2017_band6_0" , ".fits", data)
     test.file_name = 'test'
     print(test.full_path)
     test.save_image(save_format='.fits')
-    #test.display_image()
+    test.display_image()
     test.full_path = ("I:/Github/ALMA/Code/data/train/", "b335_2017_band6_0" , ".fits")
     print(test.full_path)
-tester()
+
+#tester()
