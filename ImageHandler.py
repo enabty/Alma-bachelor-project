@@ -4,6 +4,7 @@ import os
 import numpy as np
 import random
 import glob
+import sys
 from matplotlib import pyplot as plt
 from astropy.nddata import Cutout2D
 from astropy import units
@@ -84,8 +85,12 @@ class Observation:
         if (self.file_format == '.png'):
             plt.imshow(self.img_data)
             plt.show()
-        elif (self.file_format == '.fits'):
+        elif (self.file_format == '.fits'):          
             zscale = ZScaleInterval(contrast=0.25, nsamples=1)
+            #values = values[np.isfinite(values)]
+
+
+            #plt.imshow((self.img_data).squeeze(), origin='lower', cmap='rainbow', vmin=vmin, vmax=vmax)
             plt.imshow(zscale(self.img_data).squeeze(), origin='lower', cmap='rainbow')
             plt.show()
         else: 
@@ -142,7 +147,6 @@ class Observation:
             print("file must be .fits format")
             return
         self.img_data = (self.img_data * multiplicand) + addend
-        self.save_image()
 
     def noise_jitter(self, percetage_changed=1.0):
         if (self.file_format != ".fits"):
@@ -157,7 +161,6 @@ class Observation:
             x = indices[i][0]
             y = indices[i][1]
             data[x][y] *= random.uniform(0.97,1.03)
-        self.save_image()
     
     def neighbour_jitter(self, percetage_changed=1.0):
         data = self.img_data[0][0]
@@ -176,7 +179,6 @@ class Observation:
         
         for x, y, intensity in change_buffer:
             data[x][y] = intensity
-        self.save_image()
     
         
     
@@ -185,7 +187,7 @@ class Observation:
         if (self.file_format != ".fits"):
             print("file must be .fits format")
             return
-        
+
         matrix = self.img_data[0][0]
         mini = np.nanmin(matrix)
         maxi = np.nanmax(matrix)
@@ -193,7 +195,7 @@ class Observation:
         radius = min(radius, center[0], self.img_data.shape[2] - center[0], center[1], self.img_data.shape[3] - center[1])
         # Cut the matrix in the center
         focus = matrix[center[1] - radius : center[1] + radius, center[0] - radius : center[0] + radius]
-
+        focus = np.nan_to_num(focus)
         # Interpolate up to our 100x100 standard size
         x = np.linspace(mini,maxi,radius*2)
         y = np.linspace(mini,maxi,radius*2)
@@ -203,7 +205,18 @@ class Observation:
         arr2 = f(y2, x2)
         arr2.shape = (1,1,arr2.shape[0],arr2.shape[1])
         self.img_data = arr2
-        self.save_image()
+    
+    def find_object_pos(self):
+        cd = ClustarData(path=self.full_path, group_factor=0)        
+        if len(cd.groups) > 0:
+            disk = cd.groups[0]
+            bounds = disk.image.bounds
+            x = (bounds[2] + bounds[3])/2
+            y = (bounds[0] + bounds[1])/2
+            return (x, y)
+        else:
+            print("No object found in {}".format(self.full_path))
+            return None
 
 
 
