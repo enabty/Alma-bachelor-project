@@ -37,9 +37,10 @@ def tester():
             pass
         #object_pos = test.find_object_pos()
         object_pos = None
-        test.display_image()
-        print(data.shape)
         test.crop_resize(25,(50,45))
+        test.display_image()    
+        test.flip_image(1)
+        
         test.display_image()
         test.file_name = test.file_name + '_test'
         if object_pos != None:
@@ -53,7 +54,6 @@ def tester():
         
         #test.save_image(save_format='.png', save_folder='C:/Users/jensc/Documents/Github/ALMA/Code/data/org/png/neg/')
         #test.display_image()
-        #test.save_image()
 
   
 tester()
