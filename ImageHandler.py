@@ -110,7 +110,9 @@ class Observation:
             if (self.file_format == '.png'):
                 plt.imsave(save_path, self.img_data)
             elif (self.file_format == '.fits'): 
-                plt.imsave(save_path, self.img_data[0][0])
+                zscale = ZScaleInterval(contrast=0.25, nsamples=1)
+                focus = np.nan_to_num(self.img_data)
+                plt.imsave(save_path, zscale(focus).squeeze(), origin='lower', cmap='rainbow')
             else:
                 raise Exception('File format not supported')       
             
@@ -205,6 +207,12 @@ class Observation:
         arr2 = f(y2, x2)
         arr2.shape = (1,1,arr2.shape[0],arr2.shape[1])
         self.img_data = arr2
+
+    def standard_crop(self, center):
+        crop_size = units.Quantity((100, 100), units.pixel)
+        img_crop = Cutout2D(self.img_data[0][0], center, crop_size)
+        img_crop.shape = (1,1,img_crop.shape[0],img_crop.shape[1])
+        self.img_data = img_crop.data
     
     def find_object_pos(self):
         cd = ClustarData(path=self.full_path, group_factor=0)        
