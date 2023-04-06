@@ -210,9 +210,9 @@ class Observation:
 
     def standard_crop(self, center):
         crop_size = units.Quantity((100, 100), units.pixel)
-        img_crop = Cutout2D(self.img_data[0][0], center, crop_size)
+        img_crop = Cutout2D(self.img_data[0][0], center, crop_size).data
         img_crop.shape = (1,1,img_crop.shape[0],img_crop.shape[1])
-        self.img_data = img_crop.data
+        self.img_data = img_crop
     
     def find_object_pos(self):
         cd = ClustarData(path=self.full_path, group_factor=0)        
