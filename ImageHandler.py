@@ -5,6 +5,7 @@ import numpy as np
 import random
 import glob
 import sys
+import queue
 from matplotlib import pyplot as plt
 from astropy.nddata import Cutout2D
 from astropy import units
@@ -19,6 +20,7 @@ from astropy.io import fits
 from scipy.ndimage import rotate
 from PIL import Image
 from scipy import interpolate
+from operator import itemgetter
 
 class Observation:
     def __init__(self, file_folder, file_name, file_format, img_data):
@@ -172,15 +174,15 @@ class Observation:
 
         change_buffer = []
         for i in range(n):
-            x = indices[i][0]
-            y = indices[i][1]
-            neighbours = np.asarray([data[max(0, x-1)][y], data[min(data.shape[0]-1, x-1)][y], data[x][max(0, y-1)], data[x][min(data.shape[0]-1, y-1)]])
+            y = indices[i][0]
+            x = indices[i][1]
+            neighbours = np.asarray([data[max(0, y-1)][x], data[min(data.shape[0]-1, y+1)][x], data[y][max(0, x-1)], data[y][min(data.shape[0]-1, x+1)]])
             max_intensity = np.max(neighbours)
             min_intensity = np.min(neighbours)
-            change_buffer.append((x,y, random.uniform(min_intensity,max_intensity)))
+            change_buffer.append((y,x, random.uniform(min_intensity,max_intensity)))
         
-        for x, y, intensity in change_buffer:
-            data[x][y] = intensity
+        for y, x, intensity in change_buffer:
+            data[y][x] = intensity
     
         
     
@@ -231,6 +233,56 @@ class Observation:
         else:
             print("No object found in {}".format(self.full_path))
             return None
+    
+    def find_peaks(self):
+        data = self.img_data[0][0]
+        
+        data = np.nan_to_num(data)
+        # Descending order by intensity value
+        sorterad = sorted([(data[i][j],(j,i)) for i in range(len(data)) for j in range(len(data[i]))], key=lambda x: x[0], reverse=True)
+        values = np.asarray(sorterad,dtype=object)
+        # (visited bool, index in sorterad)
+        visited = [[[False,len(sorterad)] for j in range(len(data[i]))] for i in range(len(data))]
+
+        n1 = int(0.001*len(values))
+        n2 = int(0.1*len(values))
+        for i in range(len(sorterad)):
+            x, y = sorterad[i][1]
+            visited[y][x][1] = i
+        groups = []
+        for i in range(n1):
+            val = sorterad[i][0]
+            x, y = sorterad[i][1]
+            if (not visited[y][x][0]):
+                q = queue.Queue()
+                q.put(sorterad[i])
+                subgroup = []
+                while(not q.empty()):
+                    j = q.get()
+                    val = j[0]
+                    x, y = j[1]
+                    if (visited[y][x][0]): continue
+                    visited[y][x][0] = True
+                    subgroup.append(j)                   
+                    neighbours = [(max(0, y-1),x), (min(data.shape[0]-1, y+1),x), (y,max(0, x-1)), (y,min(data.shape[0]-1, x+1))]
+                    for candidate in neighbours:
+                        y, x = candidate
+                        if (visited[y][x][1] <= n2): q.put((data[y][x],(x,y)))
+                groups.append(subgroup)
+
+        filtererad = np.zeros((data.shape[0],data.shape[1]))
+        for group in groups:
+            for point in group:
+                val = point[0]
+                x, y = point[1]
+                filtererad[y][x] = val
+        print("test")
+        self.img_data[0][0] = filtererad
+        print(len(groups))
+        for group in groups:
+            print(max(group, key=itemgetter(0)))
+        
+
 
 
 
