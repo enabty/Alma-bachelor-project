@@ -9,8 +9,6 @@ def crop_around_max_value_400x400(fits):
     (x, y) = np.unravel_index(np.argmax(fits, axis=None), fits.shape)
     return fits[x-200:x+200, y-200:y+200]
 
-# Geometric mean square
-
 
 def geometric_mean_square(a, b): return np.sqrt(np.multiply(abs(a), abs(b)))
 
@@ -48,7 +46,6 @@ def pos_image_augmentation(pos_data):
     pos_data = [rotate(data, degrees, reshape=False) for (data, degrees) in list(
         zip(pos_data, [0, 0, -15, -15, -9, -9, -13, -13]))]
 
-    # Apply fits_crop_around_max to all the fits files
     # This now we have a list of 100x100 matrices where the star is in the middle and aligned
     pos_data = [crop_around_max_value_400x400(file) for file in pos_data]
 
@@ -75,5 +72,19 @@ def neg_image_augmentation(neg_data):
         0, 100) if file.shape == (400, 400)]
     return neg_data
 
+
+def image_augmentation(data):
+    if len(data) < 20:
+        return pos_image_augmentation(data)
+    return neg_image_augmentation(data)
+
+
+"""
+
+Improvements:
+
+In image we should let the if statement be based on the length of pos_data instead of the length of data.
+
+"""
 
 __name__ == '__main__' and print('pre_processing.py is working')
