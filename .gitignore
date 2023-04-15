@@ -1,2 +1,6 @@
+.gitignore
 *.DS_Store
 __pycache__/
+
+poetry.lock
+pyproject.toml
