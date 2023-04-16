@@ -1,11 +1,201 @@
 # Alma-bachelor-project
-GitHub repository for bachelor's thesis
 
-## Structure
-### Branches
-- [Main]-branch should always be deployable, therefore new branches are generated for new features and possibly later merged into main branch when they are completed.
-- Branches should be named <type>-<name>, e.g. feat-new-top-layout, or impl-experimental-functionality.
-- Branches should always represent features, bugs and hotfixes. Branches should not represent small changes in current functionality.
-- [Main]-branch is protected by "require pulls request reviews before merging", Thus it needs at least 1 approved review before it is merged into the protected branch.
+This project was completed as a part of our Bachelor's thesis. The project was carried out during the second half of the academic year of 2022-2023. This project provides a classifier for ALMA (Atacama Large Millimeter/submillimeter Array) data, specifically for the purpose of detecting protoplanetary disks in the data.
 
-**Intended project structure will be implemented asap during the weekend** 
+## Authors
+
+- [@A1](https://www.github.com/a1)
+
+
+## Acknowledgements
+
+- AK1
+- AK2
+- AK3
+
+
+## Badges
+
+
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)[![MIT License](https://img.shields.io/badge/python-%5E3.8-blue)]()
+
+
+## Installation
+
+Install the project with:
+
+```python
+  # TODO
+```
+    
+## Documentation
+
+[Documentation](https://linktodocumentation)
+
+
+## FAQ
+
+#### Question 1
+
+Answer 1
+
+#### Question 2
+
+Answer 2
+
+
+## Features
+
+- F1
+- F2
+- F3
+
+
+
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)
+
+
+## Project structure <WIP>
+
+```python
+├── alma-classifier/
+│   ├── __init__.py
+│   ├── alma_classifier/
+│   │   ├── __init__.py
+│   │   │
+│   │   ├── data_acquisition/
+│   │   │   ├── __init__.py
+│   │   │   ├── alminer_mod.py
+│   │   │   ├── constants_copy.py
+│   │   │   └── mine_n_fits.py
+│   │   ├── image_processing/
+│   │   │   ├── __init__.py
+│   │   │   ├── image_augmentation.py
+│   │   │   └── pre_processing.py
+│   │   ├── Imager.py
+│   │   ├── models/
+│   │   │   ├── __init__.py
+│   │   │   ├── pytorch/
+│   │   │   │   ├── __init__.py
+│   │   │   │   └── model_01/
+│   │   │   │       ├── __init__.py
+│   │   │   │       ├── constants.py
+│   │   │   │       ├── evaluation.py
+│   │   │   │       ├── model.py
+│   │   │   │       └── training.py
+│   │   │   └── tensorflow/
+│   │   │       ├── __init__.py
+│   │   │       └── model_01/
+│   │   │           ├── __init__.py
+│   │   │           ├── constants.py
+│   │   │           ├── evaluation.py
+│   │   │           ├── model.py
+│   │   │           └── training.py
+│   │   ├── pipeline_pytorch.py
+│   │   ├── pipeline_tensorflow.py
+│   │   └── utils/
+│   │       └── __init__.py
+│   ├── config.py
+│   ├── data/
+│   │   ├── datasets/
+│   │   │   ├── raw/
+│   │   │   │   ├── neg/
+│   │   │   │   └── pos/
+│   │   │   └── reviewed/
+│   │   │       ├── test/
+│   │   │       │   ├── neg/
+│   │   │       │   └── pos/
+│   │   │       ├── train/
+│   │   │       │   ├── neg/
+│   │   │       │   └── pos/
+│   │   │       └── val/
+│   │   │           ├── neg/
+│   │   │           └── pos/
+│   │   └── fits/
+│   │       ├── neg/
+│   │       └── pos/
+│   ├── docs/
+│   │   └── branches.md
+│   ├── LICENSE
+│   ├── notebooks/
+│   │   ├── data_acquisition.ipynb
+│   │   ├── model_evaluation.ipynb
+│   │   └── model_training.ipynb
+│   ├── requirements.txt
+│   └── tests/
+│       ├── test_data_acquisition.py
+│       ├── test_model_pytorch.py
+│       ├── test_model_tensorflow.py
+│       └── test_pre_processing.py
+
+```
+## Structure Explained
+
+### alma-classifier/
+This directory contains the source code for the ALMA classifier.
+
+### alma_classifier/
+This directory contains the implementation of the ALMA classifier.
+
+#### data_acquisition/
+This directory contains the implementation for data acquisition.
+
+`alminer_mod.py`: implementation of Alminer class that mines the data from the FITS files.
+`constants_copy.py`: constant variables for data acquisition.
+`mine_n_fits.py`: implementation of mine_n_fits function that reads the FITS files.
+
+#### image_processing/
+This directory contains the implementation for image processing.
+
+`image_augmentation.py`: implementation of image augmentation.
+`pre_processing.py`: implementation of image pre-processing.
+
+
+#### models/
+This directory contains the implementation of the neural network models.
+
+`pytorch/`: implementation of the PyTorch model.
+`tensorflow/`: implementation of the TensorFlow model.
+
+
+#### utils/
+This directory contains utility functions.
+
+#### Other Files
+`Imager.py`: implementation of the Imager class.
+`pipeline_pytorch.py`: implementation of the PyTorch pipeline to keep model sandboxed.
+`pipeline_tensorflow.py`: implementation of the TensorFlow pipeline.
+`config.py`: configuration file with, if needed, global settings for whole project
+`LICENSE`: license file.
+
+
+#### data/
+This directory is where all data used in the project is stored. It is divided into two subdirectories:
+
+##### datasets/
+This directory contains the datasets.
+
+`raw/`: raw genererated training data.
+`reviewed/`: reviewed raw data.
+
+`fits/
+`This directory contains the FITS files.
+
+Other Directories/files
+**docs**/: documentation.
+**notebooks**/: This directory contains Jupyter notebooks used for exploratory data analysis and experimentation.
+**tests**/: unit tests.
+**reports/**: This directory contains any reports generated by the project, including visualizations, analysis, and findings.
+**requirements**.txt: This file lists all the Python packages required to run the project.
+**setup.py**: This file contains the project metadata required for packaging the project as a Python distribution.
+
+
+## Workflow
+### Branches  # TODO
+<!-- - [Main]-branch should always be deployable, therefore new branches are generated for new features and possibly later merged into main branch when they are completed. -->
+<!-- - Branches should be named <type>-<name>, e.g. feat-new-top-layout, or impl-experimental-functionality. -->
+<!-- - Branches should always represent features, bugs and hotfixes. Branches should not represent small changes in current functionality. -->
+<!-- - [Main]-branch is protected by "require pulls request reviews before merging", Thus it needs at least 1 approved review before it is merged into the protected branch. -->
+
