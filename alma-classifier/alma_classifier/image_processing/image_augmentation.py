@@ -15,30 +15,23 @@ def geometric_mean_square(a, b): return np.sqrt(np.multiply(abs(a), abs(b)))
 # _------ It is ugly atm, but it works ATM. Reowrk so it is shorter ------------_#
 # Linnear transformation || Random  rezise, rotate, flip and return 100x100
 
-
-def linear_transformation(fits):
-    ret_image = fits
-
+def linear_transformation(ret_image):
     random_resize = random.randint(150, 350)
     ret_image = resize(ret_image, (random_resize, random_resize))
 
     ret_image = rotate(ret_image, random.randint(0, 360), reshape=False)
 
-    if random.getrandbits(1):
-        ret_image = np.fliplr(ret_image)
-    if random.getrandbits(1):
-        ret_image = np.flipud(ret_image)
+    if random.getrandbits(1): ret_image = np.fliplr(ret_image)
+    if random.getrandbits(1): ret_image = np.flipud(ret_image)
 
     (lwr_bound, upr_bound) = int(random_resize/2) - 55, int(random_resize/2) - 45
     x = random.randint(lwr_bound, upr_bound)
     y = random.randint(lwr_bound, upr_bound)
-
-    return ret_image[x:x+100, y:y+100]
+    return ret_image[y:y+100, x:x+100]
 
 
 def pos_image_augmentation(pos_data):
 
-    # resize the data so that all the disks are roughly the same size exepct for the two largest ones
     # resize the data so that all the disks are roughly the same size exepct for the two largest ones
     pos_data = [file if (file is pos_data[2] or file is pos_data[3]) else resize(
         file, (2000, 2000)) for file in pos_data]
