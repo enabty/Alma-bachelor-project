@@ -39,6 +39,7 @@ def linear_transformation(fits):
 def pos_image_augmentation(pos_data):
 
     # resize the data so that all the disks are roughly the same size exepct for the two largest ones
+    # resize the data so that all the disks are roughly the same size exepct for the two largest ones
     pos_data = [file if (file is pos_data[2] or file is pos_data[3]) else resize(
         file, (2000, 2000)) for file in pos_data]
 
@@ -46,10 +47,12 @@ def pos_image_augmentation(pos_data):
     pos_data = [rotate(data, degrees, reshape=False) for (data, degrees) in list(
         zip(pos_data, [0, 0, -15, -15, -9, -9, -13, -13]))]
 
+    # Apply fits_crop_around_max to all the fits files
     # This now we have a list of 100x100 matrices where the star is in the middle and aligned
     pos_data = [crop_around_max_value_400x400(file) for file in pos_data]
 
     # Flip each image LR, UD and both
+
     f1, f2, f3, f4 = lambda file: file, lambda file: np.fliplr(
         file), lambda file: np.flipud(file), lambda file: np.flip(file)
     # flip_fits = lambda file: [f(file) for f in [f1, f2, f3, f4]]
@@ -58,10 +61,7 @@ def pos_image_augmentation(pos_data):
     # Multiply two matrices together and return the square root of the result
     # Make non-linnear combinations of all the fits files
     pos_data += [geometric_mean_square(pos_data[i], pos_data[j])
-                 for i in range(0, len(pos_data)) for j in range(i+4, len(pos_data))]
-
-    pos_data += [linear_transformation(file)
-                 for file in pos_data for i in range(0, 5)]
+                 for i in range(0, len(pos_data)) for j in range(i+1, len(pos_data))]
 
     return pos_data
 

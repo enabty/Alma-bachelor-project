@@ -4,3 +4,7 @@ __pycache__/
 
 poetry.lock
 pyproject.toml
+data/neg_fits/*
+
+alma-classifier/alma_classifier/image_processing/temp/*
+data/fits/neg/

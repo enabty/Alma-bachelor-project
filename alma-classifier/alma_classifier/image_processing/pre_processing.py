@@ -7,9 +7,10 @@ def crop_around_middle_50x50_percent(fits): return fits[(int(fits.shape[0]*.25))
 
 
 def pre_processing(file_path):
+    print('pre_processing.py is working')
     # Load the data, pos_data is a list of matrices from a folder of fits files
-    processed_img = [fits.getdata(file).squeeze()
-                     for file in glob.glob(file_path + '/*.fits')]
+    processed_img = [fits.getdata(file).squeeze() for file in glob.glob(file_path + '/*.fits')]
+
     # Reshape the data to be the middle 50% of the image,
     # This ensures that no extreme edge values are included where noise to intense
     return [crop_around_middle_50x50_percent(file) for file in processed_img if file.shape[0] > 500 and file.shape[1] > 500]
