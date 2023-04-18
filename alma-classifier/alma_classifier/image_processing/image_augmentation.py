@@ -45,7 +45,6 @@ def pos_image_augmentation(pos_data):
     pos_data = [crop_around_max_value_400x400(file) for file in pos_data]
 
     # Flip each image LR, UD and both
-
     f1, f2, f3, f4 = lambda file: file, lambda file: np.fliplr(
         file), lambda file: np.flipud(file), lambda file: np.flip(file)
     # flip_fits = lambda file: [f(file) for f in [f1, f2, f3, f4]]
