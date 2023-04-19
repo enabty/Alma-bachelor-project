@@ -17,6 +17,8 @@ from scipy.ndimage import rotate
 from PIL import Image
 from scipy import interpolate
 from operator import itemgetter
+import scipy.ndimage
+import skimage.transform
 
 
 
@@ -88,7 +90,7 @@ def crop_resize(image, radius, center):
     y2 = np.linspace(mini, maxi, 100)
     arr2 = f(y2, x2)
     arr2.shape = (1,1,100,100)
-    #image.img_data = arr2
+    image.img_data = arr2
     return arr2
 
 def standard_crop(image, center):
@@ -98,9 +100,32 @@ def standard_crop(image, center):
     image.img_data = img_crop
     return image.img_data
 
-def rotate_image(image, degrees):
-    pass
+def rotate(image, degrees):
+    data = image.img_data[0][0]
+    data = scipy.ndimage.rotate(data, degrees)
+    data.shape = (1,1,data.shape[0],data.shape[1])
+    image.img_data = data
+    return image.img_data
 
 def flip_image(image, axis):
     image.img_data[0][0] = np.flip(image.img_data[0][0], axis=axis)
     return image.img_data
+
+def crop_middle(image, percentage):
+    data = image.img_data[0][0]
+    low = 0 + percentage/2
+    high = 1 - percentage/2
+    data = data[(int(data.shape[0]*low)):(int(data.shape[0]*high)), (int(data.shape[1]*low)):(int(data.shape[1]*high))]
+    data.shape = (1,1,data.shape[0],data.shape[1])
+    image.img_data = data
+    return image.img_data
+
+def resize(image, size):
+    data = image.img_data[0][0]
+    data = skimage.transform.resize(data, (size,size))
+    data.shape = (1,1,data.shape[0],data.shape[1])
+    image.img_data = data
+    return image.img_data
+
+def geometric_mean_square(image1, image2): 
+    return np.sqrt(np.multiply(abs(image1.img_data), abs(image2.img_data)))

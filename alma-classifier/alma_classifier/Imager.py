@@ -7,6 +7,7 @@ import random
 import glob
 import sys
 import queue
+import copy
 from matplotlib import pyplot as plt
 from astropy.nddata import Cutout2D
 from astropy import units
@@ -238,8 +239,7 @@ class Observation:
         self.aug_history = self.aug_history + ["neighbour_jitter"]
         return res
     
-        
-    
+          
     # Cut out a square of a radius at a center = (x,y) and scale up the size with interpolation
     def crop_resize(self, radius, center):
         res = augm.crop_resize(self, radius, center)
@@ -247,14 +247,15 @@ class Observation:
         self.aug_history = self.aug_history + ["crop_resize"]
         return res
 
+    # Crop a 100x100 around a center point
     def standard_crop(self, center):
         res = augm.standard_crop(self, center)
 
         self.aug_history = self.aug_history + ["standard_crop"]
         return res
     
-    def rotate_image(self, degrees):
-        res = augm.rotate_image(self, degrees)
+    def rotate(self, degrees):
+        res = augm.rotate(self, degrees)
 
         self.aug_history = self.aug_history + ["rotate_image"]
         return res
@@ -265,6 +266,19 @@ class Observation:
         self.aug_history = self.aug_history + ["flip_image"]
         return res
     
+    # Crop around middle by a percentage to cut out outer parts
+    def crop_middle(self, percentage):
+        res = augm.crop_middle(self, percentage)
+
+        self.aug_history = self.aug_history + ["crop_middle"]
+        return res
+    
+    def resize(self, size):
+        res = augm.resize(self, size)
+
+        self.aug_history = self.aug_history + ["resize"]
+        return res
+
 
 def tester():    
     hdul = fits.open("C:/Users/jensc/Documents/GitHub/ALMA/Code/data/org/fits/pos/" + "b335_2017_band6_0" + ".fits", memmap=False)
@@ -272,13 +286,16 @@ def tester():
     hdul.close()
     test = Observation("C:/Users/jensc/Documents/GitHub/ALMA/Code/data/org/fits/pos/", "b335_2017_band6_0" , ".fits", data, [])
     test.file_name = 'test'
-    print(test.img_data)
-    test.flip_image(1)
-    test.neighbour_jitter(0.1)
+    
+    test.resize(50)
+    test2 = copy.deepcopy(test)
+    test2.neighbour_jitter(1.0)
+    test2.display_image()
+    test.rotate(90)
 
     print(test.aug_history)
     test.display_image()
 
-#tester()
+tester()
 
     
