@@ -1,5 +1,6 @@
-from pre_processing import pre_processing
-from image_augmentation import neg_image_augmentation, pos_image_augmentation
+from image_processing.pre_processing import pre_processing
+from image_processing.image_augmentation import neg_image_augmentation, pos_image_augmentation
+from pathlib import Path
 
 
 def generate_training_data(gen_data=bool):
@@ -7,12 +8,13 @@ def generate_training_data(gen_data=bool):
 
         print('Generating training data')
 
+        root_path = str(Path(__file__).parents[2])
         pos_data = pre_processing(
-            'C:\ChalmersWorkspaces\KandidatArbete\Alma-bachelor-project\data\pos_fits')
+            root_path + '\\alma-classifier\\data\\fits\\pos\\')
         pos_data = pos_image_augmentation(pos_data)
 
         neg_data = pre_processing(
-            'C:\ChalmersWorkspaces\KandidatArbete\Alma-bachelor-project\data\neg_fits')
+            root_path + '\\alma-classifier\\data\\fits\\neg\\')
         neg_data = neg_image_augmentation(neg_data)
 
         # ----------------------Save data to .npy file----------------------#

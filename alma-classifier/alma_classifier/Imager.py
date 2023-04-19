@@ -1,4 +1,4 @@
-import augmentation_methods as augm
+import image_processing.augmentation_methods as augm
 import pandas as pd
 import csv
 import os
@@ -296,6 +296,6 @@ def tester():
     print(test.aug_history)
     test.display_image()
 
-tester()
+#tester()
 
     
