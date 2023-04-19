@@ -278,6 +278,12 @@ class Observation:
 
         self.aug_history = self.aug_history + ["resize"]
         return res
+    
+    def geometric_mean_square(self, image2):
+        res = augm.geometric_mean_square(self, image2)
+
+        self.aug_history = self.aug_history + ["geometric_mean_square - with: " + image2.file_name]
+        return res
 
 
 def tester():    
@@ -290,11 +296,13 @@ def tester():
     test.resize(50)
     test2 = copy.deepcopy(test)
     test2.neighbour_jitter(1.0)
-    test2.display_image()
+    
     test.rotate(90)
+    test.display_image()
+    test.geometric_mean_square(test2)
+    test.display_image()
 
     print(test.aug_history)
-    test.display_image()
 
 #tester()
 

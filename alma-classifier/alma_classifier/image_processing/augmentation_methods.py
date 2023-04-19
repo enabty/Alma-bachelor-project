@@ -127,5 +127,7 @@ def resize(image, size):
     image.img_data = data
     return image.img_data
 
+# Performs geometric_mean_square on the first image with the second image
 def geometric_mean_square(image1, image2): 
-    return np.sqrt(np.multiply(abs(image1.img_data), abs(image2.img_data)))
+    image1.img_data = np.sqrt(np.multiply(abs(image1.img_data), abs(image2.img_data)))
+    return image1.img_data
