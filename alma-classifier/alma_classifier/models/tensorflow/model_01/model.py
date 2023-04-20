@@ -1,34 +1,28 @@
+from keras.models import Sequential
+from keras.layers import Dense, Dropout, Flatten
+from keras.layers import Conv2D, MaxPooling2D
 
-# from astropy.io import fits
-# import glob
+"""
 
+    This function creates a CNN model.
 
-def generate_training_data(gen_data=bool):
-    if gen_data == True:
+"""
 
-        print('Generating training data')
+def model():
 
-        # pos_data = pre_processing(
-        #     'C:\ChalmersWorkspaces\KandidatArbete\Alma-bachelor-project\data\pos_fits')
+    model = Sequential()
+    model.add(Conv2D(32, kernel_size=(3, 3),
+                        activation='relu',
+                        input_shape=(100, 100, 1)))
+    model.add(Conv2D(64, (3, 3), activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Dropout(0.25))
+    model.add(Flatten())
+    model.add(Dense(128, activation='relu'))
+    model.add(Dropout(0.5))
+    model.add(Dense(2, activation='softmax'))
 
-        # pos_data = pos_image_augmentation(pos_data)
-
-        # np.save('pos_train.npy', pos_data, allow_pickle=True)
-
-        neg_data = pre_processing(
-            'C:\ChalmersWorkspaces\KandidatArbete\Alma-bachelor-project\data\neg_fits')
-
-        print(len(neg_data))
-
-        neg_data = neg_image_augmentation(neg_data)
-
-        # np.save('neg_train.npy', neg_data, allow_pickle=True)
-
-        # print(len(neg_data), len(pos_data))
-
-        print('Data generated successfully')
-
-        return neg_data
+    return model
 
 
-__name__ == '__main__' and generate_training_data(True)
+__name__ == '__main__' and print('model.py works!')
