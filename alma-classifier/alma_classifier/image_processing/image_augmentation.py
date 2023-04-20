@@ -36,7 +36,7 @@ def linear_transformation(fits):
     return ret_image[x:x+100, y:y+100]
 
 
-def pos_image_augmentation(pos_data):
+def generate_unsorted_dataset(pos_data):
 
     # resize the data so that all the disks are roughly the same size exepct for the two largest ones
     # resize the data so that all the disks are roughly the same size exepct for the two largest ones
@@ -64,20 +64,6 @@ def pos_image_augmentation(pos_data):
                  for i in range(0, len(pos_data)) for j in range(i+1, len(pos_data))]
 
     return pos_data
-
-
-def neg_image_augmentation(neg_data):
-    neg_data = [crop_around_max_value_400x400(file) for file in neg_data]
-    neg_data += [linear_transformation(file)for file in neg_data for i in range(
-        0, 100) if file.shape == (400, 400)]
-    return neg_data
-
-
-def image_augmentation(data):
-    if len(data) < 20:
-        return pos_image_augmentation(data)
-    return neg_image_augmentation(data)
-
 
 """
 
