@@ -3,13 +3,12 @@ from models.tensorflow.model_01.evaluation import evaluate_model
 from image_processing.pre_processing import init_from_npy
 from models.tensorflow.model_01.model import model 
 
-def pippeline_tensorflow():
+
+def pippeline_tensorflow(pos_npy_path='C:/ChalmersWorkspaces/KandidatArbete/raw_data/pos_dataset.npy', neg_npy_path='C:/ChalmersWorkspaces/KandidatArbete/raw_data/neg_dataset.npy'):
 
     #-------------------Importing data-------------------#
 
-    X, y = init_from_npy(
-        'C:/ChalmersWorkspaces/KandidatArbete/raw_data/pos_dataset.npy',
-        'C:/ChalmersWorkspaces/KandidatArbete/raw_data/neg_dataset.npy')
+    X, y = init_from_npy(pos_npy_path, neg_npy_path,)
 
     #-------------------Reshape to tensor-------------------#
 
@@ -17,11 +16,17 @@ def pippeline_tensorflow():
 
     #-------------------Creat model-------------------#
 
-    cnn_model = model()
+    nn_model = model()
 
     #-------------------Compile model-------------------#
     
-    evaluate_model(X_train, X_test, y_train, y_test, cnn_model)
+    evaluate_model(X_train, X_test, y_train, y_test, nn_model)
+
+    #-------------------Save model-------------------#
+    
+    # nn_model.save('C:/ChalmersWorkspaces/KandidatArbete/models/tensorflow/model_01/model.h5')
+
+    return nn_model
 
 
 __name__ == '__main__' and pippeline_tensorflow()
