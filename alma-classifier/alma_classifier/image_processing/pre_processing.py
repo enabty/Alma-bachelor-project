@@ -1,39 +1,40 @@
 from astropy.io import fits
 import numpy as np
 import glob
-from image_processing.image_augmentation import linear_transformation
-
-
-def crop_around_middle_50x50_percent(fits): return fits[(int(fits.shape[0]*.25)):(int(fits.shape[0]*.75)),
-                                                        (int(fits.shape[1]*.25)):(int(fits.shape[1]*.75))]
-
-def crop_middle_100x100(fits): return fits[fits.shape[0]//2-50:fits.shape[0]//2+50,
-                                            fits.shape[1]//2-50:fits.shape[1]//2+50]
-
-
-def crop_around_max_value_400x400(fits):
-    (x, y) = np.unravel_index(np.argmax(fits, axis=None), fits.shape)
-    return fits[x-200:x+200, y-200:y+200]
-
-
+from helper_functions import *
 
 
 """
 
 This function takes a path to a folder containing FITS files and returns the data in 
-an array of 2D-arrays of size 400x400.
+an array of 2D-arrays of size 000x100. Ready to be used as input for a neural network.
 
+Input:
+
+    file_path: path to folder containing FITS files
+    linnear_aug: if True, the data will be augmented by linear transformations
+    augment_factor: how many times the data will be augmented
 
 """
 
 
-def init_fits_files_from_folder(file_path):
+def init_training_data_from_folder(file_path, linnear_aug=False, augment_factor=5):
+
     fits_files_data = [fits.getdata(file).squeeze() for file in glob.glob(file_path + '/*.fits')]
-    print(len(fits_files_data))
     fits_files_data = [crop_around_middle_50x50_percent(file) for file in fits_files_data if file.shape[0] > 500 and file.shape[1] > 500]
-    return np.array([crop_around_max_value_400x400(file) for file in fits_files_data])
+    fits_files_data = ([crop_around_max_value_400x400(file) for file in fits_files_data])
+    if linnear_aug:
+        return np.array([linear_transformation(file) for file in fits_files_data for i in range(augment_factor) if file.shape == (400, 400)])
+    return np.array([crop_middle_100x100(file) for file in fits_files_data if file.shape == (400, 400)])
 
 
+"""
+
+Convert a folder of FITS files to a numpy array and save it to a npy file.
+
+"""
+
+def fits_to_npy(folder_path, npy_path, linnear_aug=False, augment_factor=5): np.save(npy_path, init_training_data_from_folder(folder_path, linnear_aug, augment_factor), allow_pickle=True)
 
 """
 
@@ -42,29 +43,21 @@ Init X and y from numpy arrays of positive and negative data.
 """
 
 
-def init_from_npy(pos_path, neg_path):
+def init_training_data_from_npy(pos_path, neg_path, linnear_aug=False, augment_factor=5):
 
     fits_pos = np.load(pos_path, allow_pickle=True)
-    fits_pos = [fits for fits in fits_pos if fits.shape == (400, 400)]
-    fits_pos = np.array(fits_pos)
-
     fits_neg = np.load(neg_path, allow_pickle=True)
-    fits_neg = [fits for fits in fits_neg if fits.shape == (400, 400)]
-    fits_neg = np.array(fits_neg)
+
+    if linnear_aug:
+        fits_pos = np.array([linear_transformation(file) for file in fits_pos for i in range(augment_factor) if file.shape == (400, 400)])
+        fits_neg = np.array([linear_transformation(file) for file in fits_neg for i in range(augment_factor) if file.shape == (400, 400)])
 
     y = [0] * len(fits_neg) + [1] * len(fits_pos)
 
     X = np.concatenate((fits_neg, fits_pos), axis=0)
 
-    X = [linear_transformation(fits) for fits in X]
-
     return X, y
 
  
-def gen_neg_dataset():
-    data = init_fits_files_from_folder(
-        'C:/ChalmersWorkspaces/KandidatArbete/raw_data/neg')
-    print(len(data))
-    np.save('C:/ChalmersWorkspaces/KandidatArbete/Alma-bachelor-project/data/neg_dataset/neg_dataset.npy', data, allow_pickle=True)
 
 __name__ == '__main__' and print('pre_processing.py is working')

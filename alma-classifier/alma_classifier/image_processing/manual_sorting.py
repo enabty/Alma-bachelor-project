@@ -1,89 +1,84 @@
-import glob
 import numpy as np
+import tkinter as tk
+import matplotlib.pyplot as plt
 from matplotlib import pyplot as plt
-# from image_augmentation import neg_image_augmentation, pos_image_augmentation
-from pre_processing import init_fits_files_from_folder
-from astropy.visualization import ZScaleInterval
-zscale = ZScaleInterval(contrast=0.25, nsamples=1)
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 
-# def manual_sorting():
-#     pos_data = pre_processing(
-#         'C:/ChalmersWorkspaces/KandidatArbete/Alma-bachelor-project/data/fits/pos')
-#     print(len(pos_data))
-#     pos_data = pos_image_augmentation(pos_data)
+"""
 
-#     for i in range(0, len(pos_data)):
-#         plt.figure(frameon=False)
-#         plt.imshow(zscale(pos_data[i]), origin='lower',
-#                    cmap='CMRmap_r', aspect='auto')
-#         plt.savefig(
-#             'alma-classifier/alma_classifier/image_processing/temp/pos_{}.png'.format(i))
-#         plt.close()
+Class used to manually sort and view data.
 
+"""
+class DataViewer:
+    def __init__(self, matrices):
+        self.matrices = matrices
+        self.index = 0
 
-# def sort_pos_data():
-#     file_names = glob.glob('alma-classifier/alma_classifier/image_processing/temp/*.png')
-#     print(len(file_names))
-#     index_to_keep = []
+        self.root = tk.Tk()
+        self.root.geometry("500x600")
+        self.root.title("Matrix Viewer")
 
-#     for file in file_names:
-#         if len(file) == 63:
-#             index_to_keep.append(int(file[-5:-4]))
-#         elif len(file) == 64:
-#             index_to_keep.append(int(file[-6:-4]))
-#         elif len(file) == 65:
-#             index_to_keep.append(int(file[-7:-4]))
+        self.fig, self.ax = plt.subplots(figsize=(5, 5))
+        self.ax.imshow(self.matrices[self.index], cmap = "CMRmap_r" )
 
-#     pos_data = pre_processing(
-#         'C:/ChalmersWorkspaces/KandidatArbete/Alma-bachelor-project/data/fits/pos')
-#     pos_data = pos_image_augmentation(pos_data)
+        self.canvas = FigureCanvasTkAgg(self.fig, master=self.root)
+        self.canvas.draw()
+        self.canvas.get_tk_widget().pack()
 
-#     # Sort the data by index of index_to_keep
+        self.delete_button = tk.Button(
+            self.root, text="Delete", command=self.delete_matrix)
+        self.delete_button.pack(side="right")
 
-#     pos_data = [pos_data[i] for i in index_to_keep]
+        self.save_button = tk.Button(
+            self.root, text="Save", command=self.save_matrix)
+        self.save_button.pack(side="right")
 
+        self.root.mainloop()
 
-#     pos_data = [fits.data for fits in glob.glob('path/to/fits/files/*.fits ')]
-#     np.save('alma-classifier/data/datasets/reviewed/train/pos/pos_dataset.npy',
-#             pos_data, allow_pickle=True)
+    def show_matrix(self):
+        self.ax.clear()
+        self.ax.imshow(self.matrices[self.index], cmap = "CMRmap_r")
+        self.canvas.draw()
 
-#     return index_to_keep
+    def delete_matrix(self):
+        if self.index >= len(self.matrices):
+            print("No more matrices to show")
+            self.root.quit()
+        else:
+            self.matrices = np.delete(self.matrices, self.index, axis=0)
+            if self.index >= len(self.matrices):
+                self.root.quit()
+            else:
+                self.show_matrix()
+        
 
-
-def sort_neg_data():
-    files = init_fits_files_from_folder('C:/ChalmersWorkspaces/KandidatArbete/Alma-bachelor-project/data/fits/neg')
-    np.save('C:/ChalmersWorkspaces/KandidatArbete/Alma-bachelor-project/data/neg_dataset/neg_dataset.npy', files, allow_pickle=True)
-
-    contr = np.load('C:/ChalmersWorkspaces/KandidatArbete/Alma-bachelor-project/data/neg_dataset/neg_dataset.npy', allow_pickle=True)
-
-    print(type(contr))
-    print(type(contr[0]))
-
-
-sort_neg_data()
-
-
-# def manual_sorting():
-#     pos_data = pre_processing(
-#         'C:/ChalmersWorkspaces/KandidatArbete/Alma-bachelor-project/data/fits/pos')
-#     pos_data = pos_image_augmentation(pos_data)
+    def save_matrix(self):
+        self.index += 1
+        if self.index >= len(self.matrices):
+            print("No more matrices to show")
+            self.root.quit()
+        else:
+            self.show_matrix()
 
 
-#     save_fits_to_png(pos_data)
+""""
 
-#     # Sort the data by hand via keyboard input
-#     indexes = []
-#     for i in range(0, len(pos_data)):
-#         plt.imshow(pos_data[i], cmap='CMRmap_r')
-#         print(f'Index: {i}')
-#         print('Keep? (y/n)')
-#         plt.show()
-#         plt.close()
-#         if input() == 'y':
-#             indexes.append(i)
-#         else:
-#             pos_data[i].remove()
+Sort_manually takes a numpy array of matrices displays them and gives the user the option to delete or save them.
 
-#     np.save('C:\ChalmersWorkspaces\KandidatArbete\Alma-bachelor-project\data\pos_dataset\pos_dataset.npy', pos_data, allow_pickle=True)
+Returns a numpy array of the saved  matrices.
+
+"""
+
+
+def sort_manually(data):
+    return DataViewer(data).matrices
+    
+def save_data_to_npy(data, npy_file):
+    np.save(npy_file, data, allow_pickle=True)
+
+def load_data_from_npy(npy_file):
+    return np.load(npy_file, allow_pickle=True)
+
+
 __name__ == '__main__' and print('manual_sorting.py is working')
