@@ -48,19 +48,15 @@ transform = transforms.Compose([
     # transforms.RandomRotation(10),
     # transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.2),
     transforms.ToTensor(),
-    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+    transforms.Normalize(mean=[0.406], std=[0.225])
 ])
-
-# Load the positive and negative data from the .npy files
-pos_data = np.load('./data/fits/pos_dataset.npy')
-neg_data = np.load('./data/fits/pos_dataset.npy')
 
 
 def linear_transformation(fits):
     ret_image = fits
 
-    random_resize = random.randint(150, 350)
-    ret_image = resize(ret_image, (random_resize, random_resize))
+    # random_resize = random.randint(150, 350)
+    # ret_image = resize(ret_image, (random_resize, random_resize))
 
     ret_image = rotate(ret_image, random.randint(0, 360), reshape=False)
 
@@ -75,15 +71,46 @@ def linear_transformation(fits):
 
     return ret_image[x:x+100, y:y+100]
 
-pos_data = np.array([linear_transformation(fits)for fits in neg_data if fits.shape == (400, 400)])
+# Load the positive and negative data from the .npy files
+pos_data = np.load('./data/fits/pos_dataset.npy')
+neg_data = np.load('./data/fits/pos_dataset.npy')
+
+
+pos_data = np.array([linear_transformation(fits)for fits in pos_data if fits.shape == (400, 400)])
 
 
 neg_data = ([linear_transformation(fits)for fits in neg_data if fits.shape == (400, 400)])
 
-y = [0] * len(neg_data) + [1] * len(pos_data)
-X = np.concatenate((neg_data, pos_data), axis=0)
+# y = [0] * len(fits_neg) + [1] * len(fits_pos)
+# X = np.concatenate((fits_neg, fits_pos), axis=0)
 
-X = torch.stack([torch.from_numpy(fits) for fits in X])
+# return X, y
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # # Normalize the data using the defined transforms
 # pos_normalized = []
@@ -100,13 +127,6 @@ X = torch.stack([torch.from_numpy(fits) for fits in X])
 # neg_tensor = torch.stack(neg_normalized)
 # neg_labels = torch.zeros(neg_tensor.shape)
 
-# # Define the mean and std values
-# mean = [0.485, 0.456, 0.406]
-# std = [0.229, 0.224, 0.225]
-
-# # Normalize the tensors
-# pos_tensor = F.normalize(pos_tensor, mean=mean, std=std)
-# neg_tensor = F.normalize(neg_tensor, mean=mean, std=std)
 # # Concatenate the positive and negative tensors and labels
 # data = torch.cat((pos_tensor, neg_tensor), dim=0)
 # labels = torch.cat((pos_labels, neg_labels), dim=0)
