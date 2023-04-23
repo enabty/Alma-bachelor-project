@@ -1,5 +1,5 @@
 import keras
-
+# from .support_functions import get_loss_function, get_optimizer, get_metrics
 
 """
 
@@ -7,17 +7,17 @@ import keras
 
 """
 
-def evaluate_model(X_train, X_test, y_train, y_test, model):
+def evaluate_model(X_train, X_test, y_train, y_test, model, 
+                   loss_function='binary_crossentropy' , learning_rate=0.0001, optimizer='Adam', metrics='accuracy'):
 
     model.summary()
 
-    model.compile(loss=keras.losses.categorical_crossentropy,
-                  optimizer=keras.optimizers.Adadelta(),
-                  metrics=['accuracy'])
+    model.compile(loss = keras.losses.binary_crossentropy,
+                  optimizer='adam', metrics=['accuracy'])
 
     fit_info = model.fit(X_train, y_train,
-                         batch_size=32,
-                         epochs=5,
+                         batch_size=52,
+                         epochs=10,
                          verbose=1,
                          validation_data=(X_test, y_test))
 
