@@ -3,7 +3,7 @@ import glob
 import astropy.io.fits as fits
 from scipy.ndimage import rotate
 from skimage.transform import resize
-from helper_functions import *
+from .support_functions import *
 
 
 
@@ -22,7 +22,6 @@ def generate_unsorted_dataset(folder_path):
     pos_data = [crop_around_max_value_400x400(file) for file in pos_data]
 
     # Flip each image LR, UD and both
-
     f1, f2, f3, f4 = lambda file: file, lambda file: np.fliplr(
         file), lambda file: np.flipud(file), lambda file: np.flip(file)
     pos_data = [f(file) for file in pos_data for f in [f1, f2, f3, f4]]

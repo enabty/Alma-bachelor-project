@@ -1,7 +1,15 @@
 from astropy.io import fits
 import numpy as np
+import glob as glob
+import numpy as np
+import tkinter as tk
+import matplotlib.pyplot as plt
+from matplotlib import pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import glob
-from helper_functions import *
+import astropy.io.fits as fits
+from .support_functions import *
+from progress.spinner import Spinner
 
 
 """
@@ -44,17 +52,28 @@ Init X and y from numpy arrays of positive and negative data.
 
 
 def init_training_data_from_npy(pos_path, neg_path, linnear_aug=False, augment_factor=5):
+    
+    spinner = Spinner('Loading data from npy files... ')
 
     fits_pos = np.load(pos_path, allow_pickle=True)
     fits_neg = np.load(neg_path, allow_pickle=True)
 
     if linnear_aug:
+        spinner.finish()
+        spinner = Spinner('Augmenting data... ')
         fits_pos = np.array([linear_transformation(file) for file in fits_pos for i in range(augment_factor) if file.shape == (400, 400)])
         fits_neg = np.array([linear_transformation(file) for file in fits_neg for i in range(augment_factor) if file.shape == (400, 400)])
+
+    else:
+        fits_pos = np.array([crop_middle_100x100(file) for file in fits_pos if file.shape == (400, 400)])
+        fits_neg = np.array([crop_middle_100x100(file) for file in fits_neg if file.shape == (400, 400)])
+
 
     y = [0] * len(fits_neg) + [1] * len(fits_pos)
 
     X = np.concatenate((fits_neg, fits_pos), axis=0)
+
+    spinner.finish()
 
     return X, y
 
