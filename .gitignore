@@ -8,3 +8,5 @@ data/neg_fits/*
 
 alma-classifier/alma_classifier/image_processing/temp/*
 data/fits/neg/
+
+test_model/
