@@ -27,6 +27,7 @@ def generate_pos_training_data(load_directory='alma-classifier/data/fits/pos', s
     pos_data = sort_manually(pos_data)
     save_data_to_npy(pos_data, save_directory)
 
+
 """
 
 Note that the aoutput of generate_neg_training_data() is saved to a .npy file and is ready to be 
@@ -34,38 +35,41 @@ used in the CNN directly
 
 """
 
+
 def generate_neg_training_data(directory='alma-classifier/data/fits/neg'):
     neg_data = init_training_data_from_folder(directory)
     neg_data = sort_manually(neg_data)
-    save_data_to_npy(neg_data, 'C:/ChalmersWorkspaces/KandidatArbete/raw_data/npy_train/neg_temp.npy')
-
+    save_data_to_npy(
+        neg_data, 'C:/ChalmersWorkspaces/KandidatArbete/raw_data/npy_train/neg_temp.npy')
 
 
 def classify_data(file_paths, model, save_path='C:/ChalmersWorkspaces/KandidatArbete/raw_data/neg_fits/'):
     pos_image = predict_fits(file_paths, model)
-    [shutil.copy2(name, 'C:/ChalmersWorkspaces/KandidatArbete/raw_data/pos') for (data, name) in pos_image]
+    [shutil.copy2(name, 'C:/ChalmersWorkspaces/KandidatArbete/raw_data/pos')
+     for (data, name) in pos_image]
     return pos_image
 
 
 def create_and_save_neural_network(pos_npy_path='C:/ChalmersWorkspaces/KandidatArbete/raw_data/npy_train/pos_dataset.npy',
-                                   neg_npy_path='C:/ChalmersWorkspaces/KandidatArbete/raw_data/npy_train/neg_dataset.npy', 
+                                   neg_npy_path='C:/ChalmersWorkspaces/KandidatArbete/raw_data/npy_train/neg_dataset.npy',
                                    save_path='C:/ChalmersWorkspaces/KandidatArbete/raw_data/CNN_model',
-                                   lin_aug=False, 
+                                   lin_aug=False,
                                    aug_factor=1):
-    model = pipeline_tensorflow.pippeline_tensorflow(pos_npy_path, neg_npy_path, lin_aug, aug_factor)
+    model = pipeline_tensorflow.pippeline_tensorflow(
+        pos_npy_path, neg_npy_path, lin_aug, aug_factor)
     model.save(save_path)
 
 
-
-def main(): 
+def main():
     print('main')
 
     # create_and_save_neural_network(lin_aug=False, aug_factor=10)
 
-    model = load_model('C:/ChalmersWorkspaces/KandidatArbete/raw_data/CNN_model')
+    model = load_model(
+        'C:/ChalmersWorkspaces/KandidatArbete/raw_data/CNN_model')
 
-    predict_fits('C:/ChalmersWorkspaces/KandidatArbete/raw_data/neg_fits', model)
-    
+    predict_fits(
+        'C:/ChalmersWorkspaces/KandidatArbete/raw_data/fits_to_classify', model)
 
     # generate_pos_training_data()
 
@@ -80,7 +84,5 @@ def main():
     # images_of_interest = predict_fits('alma-classifier/data/fits/pos', model)
 
 
-
-
-
-if __name__ == '__main__': main()
+if __name__ == '__main__':
+    main()

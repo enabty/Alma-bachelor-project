@@ -226,6 +226,7 @@ def predict(model, fits): return model.predict(np.array([fits])).argmax(axis=-1)
 
 def predict_fits(file_paths, model):
     fits_files_data = [(fits.getdata(file).squeeze(), file)for file in glob.glob(file_paths + '/*.fits')]
+    print('Number of fits files: ', len(fits_files_data))
     fits_files_data = [(crop_around_middle_50x50_percent(data), name) for (data, name) in fits_files_data if data.shape[0] > 500 and data.shape[1] > 500]
     fits_files_data = [(crop_around_max_value_400x400(data), name)for (data, name) in fits_files_data]
     fits_files_data = [((data[150:250, 150:250]), name) for (data, name) in fits_files_data if data.shape == (400, 400)]
