@@ -103,6 +103,7 @@ class DataViewers:
 
         self.fig, self.ax = plt.subplots(figsize=(5, 5))
         self.ax.imshow(self.matrices[self.index], cmap = "CMRmap_r" )
+        self.ax.set_title('Generated positive object \n' + str(self.index) + '/' + str(len(self.matrices)) + ' Saved/Left')
 
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.root)
         self.canvas.draw()
@@ -121,6 +122,8 @@ class DataViewers:
     def show_matrix(self):
         self.ax.clear()
         self.ax.imshow(self.matrices[self.index], cmap = "CMRmap_r")
+        self.ax.set_title('Generated positive object \n' + str(self.index) + '/' + str(len(self.matrices)) + ' Saved/Left')
+
         self.canvas.draw()
 
     def delete_matrix(self):
@@ -195,7 +198,7 @@ Returns a numpy array of the saved  matrices.
 """
 
 
-def sort_multiple_manually(data):
+def sort_manually(data):
     return DataViewers(data).matrices
     
 # def sort_manually(data):
@@ -221,12 +224,15 @@ The function returns a numpy array of the saved matrices with the paths to the o
 def predict(model, fits): return model.predict(np.array([fits])).argmax(axis=-1)[0]
 
 
-def predict_fits(file_path, model):
-    fits_files_data = [(fits.getdata(file).squeeze(), file)for file in glob.glob(file_path + '/*.fits')]
+def predict_fits(file_paths, model):
+    fits_files_data = [(fits.getdata(file).squeeze(), file)for file in glob.glob(file_paths + '/*.fits')]
     fits_files_data = [(crop_around_middle_50x50_percent(data), name) for (data, name) in fits_files_data if data.shape[0] > 500 and data.shape[1] > 500]
     fits_files_data = [(crop_around_max_value_400x400(data), name)for (data, name) in fits_files_data]
     fits_files_data = [((data[150:250, 150:250]), name) for (data, name) in fits_files_data if data.shape == (400, 400)]
     fits_files_data = [(data, name) for (data, name) in fits_files_data if predict(model, data) == 1]
+    if len(fits_files_data) == 0:
+        print('No positive objects found')
+        return None
     return ManualSorterFITS(fits_files_data).fits_files_data
 
 

@@ -5,8 +5,8 @@ from .models.tensorflow.model_01.model import model
 from .image_processing.manual_sorting import predict_fits
 
 
-def pippeline_tensorflow(pos_npy_path='C:/ChalmersWorkspaces/KandidatArbete/raw_data/pos_dataset.npy', 
-                         neg_npy_path='C:/ChalmersWorkspaces/KandidatArbete/raw_data/neg_dataset.npy',
+def pippeline_tensorflow(pos_npy_path='C:/ChalmersWorkspaces/KandidatArbete/raw_data/npy_train/pos_dataset.npy', 
+                         neg_npy_path='C:/ChalmersWorkspaces/KandidatArbete/raw_data/npy_train/neg_dataset.npy',
                          linnear_aug=False, augmentation_factor=5):
 
     #-------------------Importing data-------------------#
@@ -24,10 +24,6 @@ def pippeline_tensorflow(pos_npy_path='C:/ChalmersWorkspaces/KandidatArbete/raw_
     #-------------------Compile model-------------------#
     
     evaluate_model(X_train, X_test, y_train, y_test, nn_model)
-
-    #-------------------Save model-------------------#
-    # nn_model.save('C:/ChalmersWorkspaces/KandidatArbete/models/tensorflow/model_01/model.h5')
-     
 
     return nn_model
 
