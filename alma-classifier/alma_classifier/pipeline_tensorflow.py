@@ -2,12 +2,14 @@ from .models.tensorflow.model_01.data_handler import tensorflow_data_handler
 from .models.tensorflow.model_01.evaluation import evaluate_model
 from .image_processing.pre_processing import init_training_data_from_npy
 from .models.tensorflow.model_01.model import model 
-from .image_processing.manual_sorting import predict_fits
 
+"""
 
-def pippeline_tensorflow(pos_npy_path='C:/ChalmersWorkspaces/KandidatArbete/raw_data/npy_train/pos_dataset.npy', 
-                         neg_npy_path='C:/ChalmersWorkspaces/KandidatArbete/raw_data/npy_train/neg_dataset.npy',
-                         linnear_aug=False, augmentation_factor=5):
+Creates, trains and returns a CNN model.
+
+"""
+
+def pippeline_tensorflow(pos_npy_path, neg_npy_path, linnear_aug=False, augmentation_factor=5):
 
     #-------------------Importing data-------------------#
 

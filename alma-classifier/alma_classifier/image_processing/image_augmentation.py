@@ -6,10 +6,6 @@ from skimage.transform import resize
 from .support_functions import *
 
 
-
-def process(token):
-    return token['generating images']
-
 def generate_pos_dataset(folder_path):
 
     print('Loading data from ' + folder_path)

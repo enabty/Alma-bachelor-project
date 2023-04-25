@@ -28,11 +28,11 @@ class ManualSorterFITS:
 
         self.root = tk.Tk()
         self.root.geometry("500x600")
-        self.root.title("Matrix Viewer")
+        self.root.title("Dustin Stoftman's Manual Sorter")
 
         self.fig, self.ax = plt.subplots(figsize=(5, 5))
         self.ax.imshow(self.data[self.index], cmap="CMRmap_r")
-        self.ax.set_title('Following object was identified as positive  \n' + path_leaf(self.name[self.index]))
+        self.ax.set_title('Identified as positive ' + str(self.index) + '/' + str(len(self.fits_name_data)) +' \n' + path_leaf(self.name[self.index]), fontsize=10)
 
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.root)
         self.canvas.draw()
@@ -52,19 +52,20 @@ class ManualSorterFITS:
         self.ax.clear()
         self.ax.imshow(self.data[self.index], cmap="CMRmap_r")
         self.ax.set_title(
-            'Following object was identified as positive  \n' + path_leaf(self.name[self.index]))
+            'Identified as positive ' + str(self.index) + '/' + str(len(self.fits_name_data)) + '\n' + path_leaf(self.name[self.index]), fontsize=10)
         self.canvas.draw()
 
     def delete_matrix(self):
         self.ax.clear()
         if self.index >= len(self.data):
             print("No more matrices to show")
-            self.fits_files_data = np.array(list(zip(self.data, self.name)))
+            self.fits_name_data = np.array(list(zip(self.data, self.name)))
             self.root.quit()
         else:
             self.data = np.delete(self.data, self.index, axis=0)
             self.name = np.delete(self.name, self.index, axis=0)
             if self.index >= len(self.data):
+                self.fits_name_data = np.array(list(zip(self.data, self.name)))
                 self.root.quit()
             else:
                 self.show_data()
@@ -75,23 +76,18 @@ class ManualSorterFITS:
         self.index += 1
         if self.index >= len(self.data):
             print("No more matrices to show")
-            self.fits_files_data = np.array(list(zip(self.data, self.name)))
+            self.fits_name_data = np.array(list(zip(self.data, self.name)))
             self.root.quit()
         else:
             self.show_data()
 
 
+"""
 
-""""
-
-DataViewers and DataViewer can be used to view data in a GUI and sort. Viewers is used for
-mnultiple matrices and Viewer is used for a single matrix. They do not however "know" what
-they are looking at, they are mostly usefull in sorting trainingdata for a CNN. They could 
-however be integreated in the class above so that they can be used for any data. But for now
-ignore them :)
-
+Data viewer for numpy arrays. Used when manually sorting POS_NPY and NEG_NPY.
 
 """
+
 class DataViewers:
     def __init__(self, matrices):
         self.matrices = matrices
@@ -149,6 +145,16 @@ class DataViewers:
         else:
             self.show_matrix()
 
+
+""""
+
+DataViewer can be used to view data in a GUI and sort. DataViewer is used for a single matrix. It does not however "know" what
+it is looking at, it is mostly usefull in sorting trainingdata for a CNN. It could 
+however be integreated in the class above so that they can be used for any data. But for now
+ignore them :)
+
+
+"""
 class DataViewer:
 
     def __init__(self, matrix):
@@ -180,7 +186,6 @@ class DataViewer:
         self.save = False
         [plt.close(figures) for figures in plt.get_fignums()]
         print(plt.get_fignums())
-        # plt.close(self.ax)
         self.root.quit()
 
     def save_matrix(self):
@@ -200,9 +205,6 @@ Returns a numpy array of the saved  matrices.
 
 def sort_manually(data):
     return DataViewers(data).matrices
-    
-# def sort_manually(data):
-#     return DataViewer(data).save
 
 def save_data_to_npy(data, npy_file):
     np.save(npy_file, data, allow_pickle=True)
@@ -234,7 +236,8 @@ def predict_fits(file_paths, model):
     if len(fits_files_data) == 0:
         print('No positive objects found')
         return None
-    return ManualSorterFITS(fits_files_data).fits_files_data
+    print('Number of positive objects: ', len(fits_files_data))
+    return ManualSorterFITS(fits_files_data).fits_name_data
 
 
 
