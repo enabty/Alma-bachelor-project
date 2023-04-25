@@ -32,7 +32,6 @@ Geometric mean square function. Used to make non-linnear combinations of the fit
 def geometric_mean_square(a, b): return np.sqrt(np.multiply(abs(a), abs(b)))
 
 
-
 """
 
 Linnear transformation || Random  rezise, rotate, flip and return 100x100

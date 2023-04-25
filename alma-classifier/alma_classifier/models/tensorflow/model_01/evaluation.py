@@ -1,5 +1,5 @@
 import keras
-# from .support_functions import get_loss_function, get_optimizer, get_metrics
+
 
 """
 
@@ -25,10 +25,3 @@ def evaluate_model(X_train, X_test, y_train, y_test, model,
 
 
 __name__ == '__main__' and print('model.py works!')
-
-
-
-
-
-
-
