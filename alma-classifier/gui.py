@@ -39,7 +39,7 @@ class MyTabView(ctk.CTkTabview):
 
         #------------------------------------------- Create Neural Network -------------------------------------------#
 
-        self.label = ctk.CTkLabel(master=self.tab("Create Neural Network"), text="Here you can choose from idfferent parameters for your neural network and train it as well as save it for later use.", anchor='center')
+        self.label = ctk.CTkLabel(master=self.tab("Create Neural Network"), text="Here you can choose from different parameters for your neural network and train it as well as save it for later use.", anchor='center')
         self.label.grid(row=0, column=0, padx=20, pady=10)
 
         #OPTIMIZER
