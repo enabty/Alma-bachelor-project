@@ -4,15 +4,31 @@ from keras.models import load_model
 from alma_classifier.image_processing.image_augmentation import generate_pos_dataset
 from alma_classifier.image_processing.manual_sorting import sort_manually, save_data_to_npy
 from alma_classifier.image_processing.pre_processing import init_training_data_from_folder
-import numpy as np
 import shutil
 
 """
 *****//PATHS//******
+
+    ** Before the first run, make sure that the paths are correct and exist at your local machine **
+
+    ORIGINAL_POS_FITS: path to folder containing positive FITS files
+
+    ORIGINAL_NEG_FITS: path to folder containing negative FITS files
+
+    POS_TRAIN: path to .npy file containing positive training data
+
+    NEG_TRAIN: path to .npy file containing negative training data
+
+    CNN_MODEL: path to folder containing CNN model
+
+    UNCLASSIFIED_FITS: path to folder containing FITS files to be classified
+
+    CLASSIFIED_FITS: path to folder where classified FITS files will be saved
+
 """
 
 
-ORIGINAL_POS_FITS = 'alma-classifier/data/fits/pos'   
+ORIGINAL_POS_FITS = 'alma-classifier/data/fits/pos'
 ORIGINAL_NEG_FITS = 'alma-classifier/data/fits/neg'
 
 POS_TRAIN = 'C:/ChalmersWorkspaces/KandidatArbete/data/npy_train/pos_dataset.npy'
@@ -56,6 +72,7 @@ used in the CNN directly
 
 """
 
+
 def generate_neg_training_data(load_directory=ORIGINAL_NEG_FITS):
     neg_data = init_training_data_from_folder(load_directory)
     neg_data = sort_manually(neg_data)
@@ -68,14 +85,16 @@ Creates and traines a CNN and saves the trained CNN to specified folder.
 
 """
 
+
 def train_CNN(pos_npy_path=POS_TRAIN,
-                neg_npy_path=NEG_TRAIN,
-                save_path=CNN_MODEL,
-                lin_aug=False,
-                aug_factor=1):
+              neg_npy_path=NEG_TRAIN,
+              save_path=CNN_MODEL,
+              lin_aug=False,
+              aug_factor=1):
     model = pipeline_tensorflow.pippeline_tensorflow(
         pos_npy_path, neg_npy_path, lin_aug, aug_factor)
     model.save(save_path)
+
 
 """
 
@@ -84,16 +103,22 @@ The classified fits files are then saved to the specified folder.
 
 """
 
-def classify_data(read_path = UNCLASSIFIED_FITS, model = CNN_MODEL, save_path=CLASSIFIED_FITS):
+
+def classify_data(read_path=UNCLASSIFIED_FITS, model=CNN_MODEL, save_path=CLASSIFIED_FITS):
     pos_image = predict_fits(read_path, load_model(model))
     [shutil.copy2(name, save_path) for (data, name) in pos_image]
+
+
+"""
+
+Print call the functions in main() to run the program.
+
+"""
 
 
 def main():
     print('main')
 
-    classify_data()
 
-
-    
-if __name__ == '__main__': main()
+if __name__ == '__main__':
+    main()
